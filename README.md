@@ -122,12 +122,18 @@ Netlify / Cloudflare Pages: drag-and-drop the folder — done.
 
 ## Wiring up the lead form
 
-`financing.html` currently opens the visitor's email app (mailto) with the form
-contents. For a smoother experience, create a free form endpoint at
-[Formspree](https://formspree.io) (or Basin/Web3Forms) and swap the mailto block in
-`js/site.js` (`initFinancing`) for a `fetch()` POST to that endpoint — it's marked
-with a comment. Leads then arrive by email/dashboard without the visitor's email
-app opening.
+The pre-approval form on `financing.html` is pre-wired for
+[FormRelay](https://www.useformrelay.com). To turn it on:
+
+1. Get a free access key at [useformrelay.com](https://www.useformrelay.com)
+   (or let Claude Code / Cursor create one over FormRelay's MCP).
+2. Paste it into `FORMRELAY_ACCESS_KEY` at the top of the financing section in
+   `js/site.js`.
+
+That's it. Submissions get emailed, stored in the FormRelay inbox, and
+spam-filtered (the form already includes the honeypot field). Until a key is
+set, the form falls back to opening the visitor's email app (mailto) with the
+details pre-filled.
 
 **Important:** the form deliberately collects **no SSN or date of birth**. A full
 credit application with SSN requires a secure, compliant backend (SSL + encryption

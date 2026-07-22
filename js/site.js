@@ -358,6 +358,13 @@
 
   /* ---------- financing ---------- */
 
+  // FormRelay (useformrelay.com) access key for the pre-approval form.
+  // Paste a key here and submissions POST to FormRelay (emailed + inbox +
+  // spam-filtered). Leave empty and the form falls back to opening the
+  // visitor's email app. This form collects no SSN/DOB, so a form service
+  // is fine here — the full credit app is a separate, stricter path below.
+  var FORMRELAY_ACCESS_KEY = "";
+
   function initFinancing() {
     // Pre-fill "vehicle of interest" from ?vehicle=
     var vehicle = new URLSearchParams(window.location.search).get("vehicle");
@@ -368,9 +375,30 @@
     if (!form) return;
     form.addEventListener("submit", function (e) {
       e.preventDefault();
-      // No backend wired up yet: open the visitor's email client with the
-      // details pre-filled, addressed to the dealership. Swap this for a
-      // Formspree/Basin endpoint (see README) for a smoother experience.
+      var ok = $("#form-success");
+
+      if (FORMRELAY_ACCESS_KEY) {
+        var data = new FormData(form);
+        data.append("access_key", FORMRELAY_ACCESS_KEY);
+        data.append("subject", "Pre-Approval Request from Website");
+        var btn = form.querySelector("button[type=submit], .btn");
+        if (btn) btn.disabled = true;
+        fetch("https://www.useformrelay.com/submit", { method: "POST", body: data })
+          .then(function (res) { return res.json(); })
+          .then(function (json) {
+            if (!json.success) throw new Error("submit failed");
+            form.reset();
+            if (ok) ok.style.display = "block";
+          })
+          .catch(function () {
+            alert("Something went wrong sending your request. Please call or text 313-891-8000.");
+          })
+          .then(function () { if (btn) btn.disabled = false; });
+        return;
+      }
+
+      // No FormRelay key set: open the visitor's email client with the
+      // details pre-filled, addressed to the dealership.
       var fields = $all("input, select, textarea", form);
       var lines = fields
         .filter(function (f) { return f.name && f.value; })
@@ -380,7 +408,6 @@
         "?subject=" + encodeURIComponent("Pre-Approval Request from Website") +
         "&body=" + encodeURIComponent(lines.join("\n"));
       window.location.href = mail;
-      var ok = $("#form-success");
       if (ok) ok.style.display = "block";
     });
   }

@@ -88,6 +88,8 @@
         <h2 style="margin-bottom:6px">Not ready for the full application? Quick Pre-Approval</h2>
         <p style="color:var(--ink-soft);margin-bottom:20px">Takes about two minutes. This is a soft inquiry — it will <strong>not</strong> affect your credit score.</p>
         <form id="finance-form">
+          <!-- FormRelay honeypot: must stay hidden and empty; bots that fill it get dropped -->
+          <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" style="display:none" aria-hidden="true">
           <div class="form-grid">
             <div>
               <label for="fin-first">First Name *</label>
