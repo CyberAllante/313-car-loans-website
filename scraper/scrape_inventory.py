@@ -214,14 +214,20 @@ def parse_vdp(url, html):
     int_color = spec(r"Interior(?:\s*Color)?[:\s]+([A-Za-z ]{3,25}?)(?:\s{2,}|Engine|$)")
 
     # --- Images (Dealer Car Search serves from imagescdn.dealercarsearch.com) ---
+    # The photo gallery lazy-loads (data-src / JS), so <img src> misses most
+    # shots. Regex the raw HTML for gallery Media URLs instead; document order
+    # keeps the dealer's primary shot first.
     images = []
-    og = soup.find("meta", property="og:image")
-    if og and og.get("content"):
-        images.append(og["content"])
-    for img in soup.find_all("img", src=True):
-        src = urljoin(BASE, img["src"])
-        if "dealercarsearch.com/Media" in src and src not in images:
+    for src in re.findall(
+        r"https?://imagescdn\.dealercarsearch\.com/Media/[^\s\"'<>)]+?\.(?:jpe?g|png|webp)",
+        html, re.I,
+    ):
+        if src not in images:
             images.append(src)
+    if not images:
+        og = soup.find("meta", property="og:image")
+        if og and og.get("content"):
+            images.append(og["content"])
     images = images[:20]
 
     # --- Description ---
