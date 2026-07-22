@@ -49,10 +49,24 @@ whole site updates.
 Just open `index.html` in a browser — it works from disk. For a proper local server:
 
 ```bash
-cd 313-car-loans
 python3 -m http.server 8080
 # → http://localhost:8080
 ```
+
+## Run it on Replit
+
+Easiest way to work on this site with zero setup:
+
+1. Go to [replit.com](https://replit.com) and log in (free account is fine).
+2. Click **Create Repl**, then **Import from GitHub**.
+3. Paste this repo URL: `https://github.com/CyberAllante/313-car-loans-website`
+   (or use the one-click link: [replit.com/new/github/CyberAllante/313-car-loans-website](https://replit.com/new/github/CyberAllante/313-car-loans-website))
+4. Hit **Run**. The included `.replit` file already sets the run command, so the site opens in the webview immediately.
+
+Notes:
+- The repo is public, so no GitHub account connection is required to import it.
+- Importing creates your own copy on Replit. Edits there do not push back to this repo unless you connect GitHub and use the Git pane.
+- The admin panel works on Replit too: open `/admin.html` in the webview URL.
 
 ## Pulling their real inventory
 
@@ -61,7 +75,7 @@ The scraper reads the live site's sitemap, visits every vehicle page, and rewrit
 Run it from any normal machine with internet access:
 
 ```bash
-cd 313-car-loans/scraper
+cd scraper
 pip install requests beautifulsoup4
 python3 scrape_inventory.py --limit 3      # test on 3 cars first
 python3 scrape_inventory.py                # full inventory, hotlinks their photo CDN
@@ -100,10 +114,9 @@ site is ready to plug into replacements whenever the automations exist.
 
 ## Deploying free on GitHub Pages
 
-1. Push this folder to a GitHub repo.
-2. Repo → Settings → Pages → deploy from branch, folder `/313-car-loans` (or move
-   these files to the repo root / a `docs/` folder).
-3. Point the `313carloans.com` domain (or a new one) at GitHub Pages when ready.
+1. This repo already has the site at the root, so: Repo → Settings → Pages →
+   deploy from branch `main`, folder `/ (root)`.
+2. Point the `313carloans.com` domain (or a new one) at GitHub Pages when ready.
 
 Netlify / Cloudflare Pages: drag-and-drop the folder — done.
 
